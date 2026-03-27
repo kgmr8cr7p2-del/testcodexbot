@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>LifeStile Finance</title>
+  <meta name="description" content="Личный финансовый журнал для телефона, планшета, ПК и Telegram Mini App." />
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+  <style>
+    :root{color-scheme:light;--bg:#f5efe7;--card:rgba(255,255,255,.88);--line:rgba(15,23,42,.12);--text:#1f2937;--muted:#5b6474;--accent:#d95d39;--income:#15803d;--expense:#be123c;--shadow:0 24px 64px rgba(55,35,17,.12);--safe-top:env(safe-area-inset-top,0px);--safe-right:env(safe-area-inset-right,0px);--safe-bottom:env(safe-area-inset-bottom,0px);--safe-left:env(safe-area-inset-left,0px)}
+    *{box-sizing:border-box}body{margin:0;min-height:100vh;font-family:Manrope,"Segoe UI",sans-serif;color:var(--text);background:radial-gradient(circle at top left,rgba(255,204,179,.85),transparent 28%),radial-gradient(circle at top right,rgba(188,226,158,.55),transparent 22%),linear-gradient(180deg,#fbf7f1 0%,#efe6da 100%)}button,input,textarea,select{font:inherit}button{cursor:pointer}.wrap{width:min(1120px,100%);margin:0 auto;padding:calc(var(--safe-top) + 16px) calc(var(--safe-right) + 14px) calc(var(--safe-bottom) + 24px) calc(var(--safe-left) + 14px)}.hero,.card{background:var(--card);border:1px solid var(--line);box-shadow:var(--shadow);backdrop-filter:blur(16px)}.hero{border-radius:30px;padding:22px}.hero h1,.card h2{margin:0;letter-spacing:-.03em}.hero h1{margin-top:10px;font-size:clamp(2rem,5vw,3.4rem);line-height:.96}.sub,.muted,.empty{color:var(--muted)}.chips,.toolbar,.summary,.quick{display:flex;flex-wrap:wrap;gap:10px}.chip{padding:10px 14px;border-radius:999px;border:1px solid var(--line);background:rgba(255,255,255,.75);font-size:.92rem}.summary{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px;margin-top:18px}.sum{border-radius:22px;padding:18px}.sum strong{display:block;margin-top:10px;font-size:clamp(1.4rem,3vw,2rem);letter-spacing:-.04em}.sum.expense{background:rgba(190,18,60,.12);color:var(--expense)}.sum.income{background:rgba(21,128,61,.12);color:var(--income)}.sum.balance{background:rgba(15,23,42,.08)}.sum.month{background:rgba(217,93,57,.1)}.layout{display:grid;grid-template-columns:minmax(320px,380px) minmax(0,1fr);gap:18px;margin-top:18px}.stack{display:grid;gap:18px}.card{border-radius:26px;padding:18px}.type{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin:16px 0}.toggle,.btn,.danger{min-height:50px;padding:12px 16px;border-radius:18px;border:1px solid var(--line);transition:.16s ease}.toggle,.btn,.danger{background:rgba(255,255,255,.82);color:var(--text)}.toggle.active-expense{background:rgba(190,18,60,.12);color:var(--expense);border-color:rgba(190,18,60,.28)}.toggle.active-income{background:rgba(21,128,61,.12);color:var(--income);border-color:rgba(21,128,61,.28)}.btn.primary{background:linear-gradient(135deg,#d95d39,#cb7b2f);color:#fff;border-color:transparent}.danger{color:var(--expense)}.toggle:hover,.btn:hover,.danger:hover,.quick button:hover{transform:translateY(-1px)}form{display:grid;gap:14px}.grid{display:grid;gap:14px}.grid.two{grid-template-columns:repeat(2,minmax(0,1fr))}label{display:block;margin-bottom:6px;font-size:.9rem;font-weight:700}input,textarea,select{width:100%;padding:14px 16px;border-radius:16px;border:1px solid rgba(15,23,42,.14);background:rgba(255,255,255,.95);outline:none}input:focus,textarea:focus,select:focus{border-color:rgba(217,93,57,.55);box-shadow:0 0 0 4px rgba(217,93,57,.12)}textarea{min-height:92px;resize:vertical}.quick button{padding:10px 14px;border-radius:16px;border:1px solid var(--line);background:rgba(255,255,255,.82)}.status{margin-top:14px;padding:16px;border-radius:18px;border:1px solid var(--line);background:rgba(255,255,255,.72)}.list{display:grid;gap:12px;margin-top:16px}.entry{display:grid;gap:10px;padding:16px;border-radius:20px;border:1px solid var(--line);background:rgba(255,255,255,.82)}.entry-top,.entry-bottom{display:flex;justify-content:space-between;gap:12px;align-items:start}.amount{font-weight:900;letter-spacing:-.04em}.amount.expense{color:var(--expense)}.amount.income{color:var(--income)}.empty{padding:26px 20px;border-radius:20px;border:1px dashed rgba(15,23,42,.18);background:rgba(255,255,255,.55);text-align:center}.hidden{display:none!important}@media (max-width:980px){.summary,.layout,.grid.two{grid-template-columns:1fr}}@media (max-width:640px){.hero,.card{border-radius:22px}.entry-top,.entry-bottom,.toolbar{display:grid;gap:10px}.type{grid-template-columns:1fr}}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <section class="hero">
+      <div class="sub">LifeStile Finance</div>
+      <h1>Деньги под рукой на телефоне, планшете, ПК и в Telegram.</h1>
+      <p class="muted">Статическая версия без сборки и сервера. Работает как обычный сайт и как Telegram Mini App, хранит данные локально и умеет синхронизироваться с Google Sheets через Apps Script Web App.</p>
+      <div class="chips" id="chips"></div>
+      <div class="summary">
+        <article class="sum expense"><span>Всего расходов</span><strong id="sumExpense">0 ₽</strong><small>По всем записям</small></article>
+        <article class="sum income"><span>Всего доходов</span><strong id="sumIncome">0 ₽</strong><small>По всем записям</small></article>
+        <article class="sum balance"><span>Баланс</span><strong id="sumBalance">0 ₽</strong><small>Доходы минус расходы</small></article>
+        <article class="sum month"><span>Открытый месяц</span><strong id="sumMonth">-</strong><small id="sumSource">Локальный кэш устройства</small></article>
+      </div>
+    </section>
+
+    <div class="layout">
+      <div class="stack">
+        <section class="card">
+          <h2>Новая запись</h2>
+          <p class="muted">Можно быстро переключаться между расходом и доходом и вести учёт на любом устройстве.</p>
+          <div class="type">
+            <button id="expenseBtn" class="toggle active-expense" type="button">Расход</button>
+            <button id="incomeBtn" class="toggle" type="button">Доход</button>
+          </div>
+          <div class="quick" id="quick"></div>
+          <form id="entryForm">
+            <div class="grid">
+              <div>
+                <label for="title">Название</label>
+                <input id="title" required placeholder="Например, продукты" />
+              </div>
+            </div>
+            <div class="grid two">
+              <div>
+                <label for="category">Категория</label>
+                <input id="category" list="categories" placeholder="Можно свою" />
+              </div>
+              <div>
+                <label for="amount">Сумма</label>
+                <input id="amount" type="number" min="0" step="1" inputmode="decimal" required placeholder="0" />
+              </div>
+            </div>
+            <div class="grid two">
+              <div>
+                <label for="date">Дата</label>
+                <input id="date" type="date" required />
+              </div>
+              <div>
+                <label for="monthFilter">Месяц в обзоре</label>
+                <select id="monthFilter"></select>
+              </div>
+            </div>
+            <div>
+              <label for="note">Комментарий</label>
+              <textarea id="note" placeholder="Необязательно"></textarea>
+            </div>
+            <button class="btn primary" type="submit">Сохранить запись</button>
+          </form>
+        </section>
+
+        <section class="card">
+          <h2>Google Sheets</h2>
+          <p class="muted">Вставьте ваш `.../exec` URL от Apps Script Web App. Он сохраняется только на этом устройстве и не попадает в публичный код.</p>
+          <div class="grid">
+            <div>
+              <label for="apiUrl">Apps Script URL</label>
+              <input id="apiUrl" placeholder="https://script.google.com/macros/s/.../exec" autocomplete="off" />
+            </div>
+          </div>
+          <div class="toolbar">
+            <button class="btn primary" id="saveApiBtn" type="button">Сохранить URL</button>
+            <button class="btn" id="syncBtn" type="button">Синхронизировать</button>
+            <button class="danger" id="clearApiBtn" type="button">Отключить Sheets</button>
+          </div>
+          <div class="status">
+            <strong>Статус</strong>
+            <div id="statusText">Данные сохраняются локально на этом устройстве.</div>
+          </div>
+        </section>
+      </div>
+
+      <div class="stack">
+        <section class="card">
+          <h2>Записи месяца</h2>
+          <p class="muted">Если Google Sheets подключён, добавление и удаление сразу синхронизируются между устройствами.</p>
+          <div class="toolbar">
+            <button class="btn" id="exportJsonBtn" type="button">Экспорт JSON</button>
+            <button class="btn" id="exportCsvBtn" type="button">Экспорт CSV</button>
+            <button class="btn" id="refreshBtn" type="button">Обновить экран</button>
+          </div>
+          <div class="list" id="entryList"></div>
+          <div class="empty hidden" id="emptyState">Пока нет записей. Добавьте первую операцию слева.</div>
+        </section>
+
+        <section class="card">
+          <h2>Как использовать</h2>
+          <div class="status"><strong>1. GitHub и Telegram</strong><div class="muted">Эта страница подходит для открытия по HTTPS из публичного репозитория и как Mini App через меню Telegram-бота.</div></div>
+          <div class="status"><strong>2. Google Sheets</strong><div class="muted">Apps Script файлы лежат в репозитории. После деплоя Web App вставьте URL в поле выше, и база начнёт синхронизироваться.</div></div>
+          <div class="status"><strong>3. Безопасность</strong><div class="muted">URL Apps Script лучше не публиковать открыто. В этой версии он хранится локально на каждом устройстве.</div></div>
+        </section>
+      </div>
+    </div>
+  </div>
+
+  <datalist id="categories"></datalist>
+
+  <script>
+    const STORE_KEY='lifestile-finance-static-store-v1';
+    const API_KEY='lifestile-finance-static-api-url-v1';
+    const CALLBACK_PREFIX='__lifeFinanceJsonp';
+    const TIMEOUT=15000;
+    const CATEGORIES=['Транспорт','Продукты','Кафе и рестораны','Кофе и перекусы','Дом','Аренда','Коммунальные','Интернет и связь','Подписки','Здоровье','Доходы','Другое'];
+    const QUICK={expense:[{title:'Метро',category:'Транспорт',amount:65,note:'Поездка на метро'},{title:'Продукты',category:'Продукты',amount:'',note:'Покупки в магазине'},{title:'Кафе',category:'Кафе и рестораны',amount:'',note:'Еда вне дома'}],income:[{title:'Зарплата',category:'Доходы',amount:'',note:'Основной доход'},{title:'Аванс',category:'Доходы',amount:'',note:'Авансовый платёж'},{title:'Подработка',category:'Доходы',amount:'',note:'Разовый доход'}]};
+    const state={type:'expense',entries:readEntries(),month:monthKey(today()),source:'Локальный кэш устройства'};
+    const el={chips:gid('chips'),sumExpense:gid('sumExpense'),sumIncome:gid('sumIncome'),sumBalance:gid('sumBalance'),sumMonth:gid('sumMonth'),sumSource:gid('sumSource'),expenseBtn:gid('expenseBtn'),incomeBtn:gid('incomeBtn'),quick:gid('quick'),form:gid('entryForm'),title:gid('title'),category:gid('category'),amount:gid('amount'),date:gid('date'),note:gid('note'),monthFilter:gid('monthFilter'),apiUrl:gid('apiUrl'),saveApiBtn:gid('saveApiBtn'),syncBtn:gid('syncBtn'),clearApiBtn:gid('clearApiBtn'),statusText:gid('statusText'),entryList:gid('entryList'),emptyState:gid('emptyState'),exportJsonBtn:gid('exportJsonBtn'),exportCsvBtn:gid('exportCsvBtn'),refreshBtn:gid('refreshBtn')};
+    init();
+    function gid(id){return document.getElementById(id)}
+    function init(){applyQueryApi(); initTelegram(); gid('categories').innerHTML=CATEGORIES.map(v=>`<option value="${esc(v)}"></option>`).join(''); bind(); el.date.value=today(); el.apiUrl.value=apiUrl(); render()}
+    function initTelegram(){const tg=window.Telegram&&window.Telegram.WebApp; if(!tg)return; tg.ready(); tg.expand(); if(typeof tg.setHeaderColor==='function')tg.setHeaderColor('#fbf7f1'); if(typeof tg.setBackgroundColor==='function')tg.setBackgroundColor('#f5efe7')}
+    function bind(){el.expenseBtn.onclick=()=>setType('expense'); el.incomeBtn.onclick=()=>setType('income'); el.form.onsubmit=submitEntry; el.monthFilter.onchange=e=>{state.month=e.target.value||monthKey(today()); render()}; el.saveApiBtn.onclick=saveApi; el.syncBtn.onclick=syncRemote; el.clearApiBtn.onclick=clearApi; el.exportJsonBtn.onclick=exportJson; el.exportCsvBtn.onclick=exportCsv; el.refreshBtn.onclick=render}
+    function setType(type){state.type=type; el.expenseBtn.className='toggle'+(type==='expense'?' active-expense':''); el.incomeBtn.className='toggle'+(type==='income'?' active-income':''); renderQuick()}
+    function renderQuick(){const items=QUICK[state.type]; el.quick.innerHTML=items.map((item,i)=>`<button type="button" data-i="${i}"><strong>${esc(item.title)}</strong><br><span class="muted">${esc(item.note)}</span></button>`).join(''); [...el.quick.querySelectorAll('[data-i]')].forEach(btn=>btn.onclick=()=>{const item=items[Number(btn.dataset.i)]; el.title.value=item.title; el.category.value=item.category; el.amount.value=item.amount; el.note.value=item.note})}
+    function render(){setType(state.type); renderChips(); renderMonths(); renderSummary(); renderEntries(); renderStatus()}
+    function renderChips(){const chips=[state.source,'Responsive интерфейс','Telegram Mini App ready','Экспорт JSON и CSV']; el.chips.innerHTML=chips.map(v=>`<span class="chip">${esc(v)}</span>`).join('')}
+    function renderMonths(){const months=[...new Set(state.entries.map(x=>monthKey(x.date)))].sort((a,b)=>b.localeCompare(a)); if(!months.length)months.push(monthKey(today())); if(!months.includes(state.month))months.unshift(state.month); el.monthFilter.innerHTML=months.map(m=>`<option value="${m}"${m===state.month?' selected':''}>${esc(monthLabel(m))}</option>`).join('')}
+    function renderSummary(){const total=totals(state.entries); el.sumExpense.textContent=money(total.expense); el.sumIncome.textContent=money(total.income); el.sumBalance.textContent=money(total.income-total.expense); el.sumMonth.textContent=monthLabel(state.month); el.sumSource.textContent=state.source}
+    function renderEntries(){const rows=state.entries.filter(x=>monthKey(x.date)===state.month); if(!rows.length){el.entryList.innerHTML=''; el.emptyState.classList.remove('hidden'); return} el.emptyState.classList.add('hidden'); el.entryList.innerHTML=rows.map(x=>`<article class="entry"><div class="entry-top"><div><strong>${esc(x.title)}</strong><div class="muted">${esc(x.category)} · ${esc(dateLabel(x.date))}</div></div><div class="amount ${x.type}">${x.type==='expense'?'-':'+'}${money(x.amount)}</div></div><div class="entry-bottom"><div class="muted">${esc(x.note|| (x.type==='expense'?'Расход':'Доход'))}</div><button class="danger" type="button" data-id="${x.id}">Удалить</button></div></article>`).join(''); [...el.entryList.querySelectorAll('[data-id]')].forEach(btn=>btn.onclick=()=>removeEntry(btn.dataset.id))}
+    function renderStatus(){el.statusText.textContent=apiUrl()? 'Google Sheets подключён. Если синхронизация не проходит, проверьте доступ Anyone и актуальный /exec URL.' : 'Данные сохраняются локально на этом устройстве. Для общей базы вставьте URL Apps Script Web App.'}
+    async function submitEntry(e){e.preventDefault(); const item={id:crypto.randomUUID(),title:el.title.value.trim(),category:(el.category.value||(state.type==='income'?'Доходы':'Другое')).trim(),amount:Number(el.amount.value),date:el.date.value||today(),note:el.note.value.trim(),type:state.type,createdAt:new Date().toISOString()}; if(!item.title)return status('Введите название операции.'); if(!Number.isFinite(item.amount)||item.amount<=0)return status('Сумма должна быть больше нуля.'); try{if(apiUrl()){state.entries=await remote({action:'add',title:item.title,category:item.category,amount:String(item.amount),date:item.date,note:item.note,type:item.type}); state.source='Google Sheets'} else {state.entries=sort([...state.entries,item]); state.source='Локальный кэш устройства'} saveEntries(state.entries); state.month=monthKey(item.date); el.form.reset(); el.date.value=today(); el.category.value=item.category; status('Запись сохранена.'); render()}catch(err){status(errMsg(err))}}
+    async function removeEntry(id){try{if(apiUrl()){state.entries=await remote({action:'delete',id}); state.source='Google Sheets'} else {state.entries=state.entries.filter(x=>x.id!==id); state.source='Локальный кэш устройства'} saveEntries(state.entries); status('Запись удалена.'); render()}catch(err){status(errMsg(err))}}
+    async function syncRemote(){if(!apiUrl())return status('Сначала сохраните URL Apps Script.'); try{state.entries=await remote({action:'list'}); state.source='Google Sheets'; saveEntries(state.entries); status('Данные обновлены из Google Sheets.'); render()}catch(err){status(errMsg(err))}}
+    function saveApi(){const value=el.apiUrl.value.trim(); if(!value)return status('Вставьте URL Apps Script перед сохранением.'); localStorage.setItem(API_KEY,value); status('URL сохранён на этом устройстве.'); render()}
+    function clearApi(){localStorage.removeItem(API_KEY); el.apiUrl.value=''; state.source='Локальный кэш устройства'; status('Google Sheets отключён. Приложение продолжает работать локально.'); render()}
+    function exportJson(){download('finance-data.json',JSON.stringify(state.entries,null,2),'application/json'); status('JSON экспортирован.')}
+    function exportCsv(){const header=['Дата','Тип','Категория','Название','Сумма','Комментарий']; const rows=state.entries.map(x=>[x.date,x.type==='expense'?'Расход':'Доход',x.category,x.title,String(x.amount),x.note]); const csv=[header,...rows].map(row=>row.map(v=>`"${String(v).replace(/"/g,'""')}"`).join(';')).join('\n'); download('finance-data.csv',csv,'text/csv;charset=utf-8'); status('CSV экспортирован.')}
+    function readEntries(){try{return normalize(JSON.parse(localStorage.getItem(STORE_KEY)||'[]'))}catch{return[]}}
+    function saveEntries(entries){localStorage.setItem(STORE_KEY,JSON.stringify(entries))}
+    function normalize(raw){if(!Array.isArray(raw))return[]; return sort(raw.map(x=>{if(!x||typeof x!=='object')return null; const title=String(x.title||'').trim(); const amount=Number(x.amount||0); const date=String(x.date||''); if(!title||!Number.isFinite(amount)||amount<=0||!/^[0-9]{4}-[0-9]{2}-[0-9]{2}$/.test(date))return null; return {id:String(x.id||crypto.randomUUID()),title,category:String(x.category||'Другое').trim(),amount,date,note:String(x.note||'').trim(),type:x.type==='income'?'income':'expense',createdAt:String(x.createdAt||new Date().toISOString())}}).filter(Boolean))}
+    function sort(rows){return [...rows].sort((a,b)=>a.date!==b.date? b.date.localeCompare(a.date): b.createdAt.localeCompare(a.createdAt))}
+    function totals(rows){return rows.reduce((acc,x)=>{if(x.type==='expense')acc.expense+=x.amount; else acc.income+=x.amount; return acc},{expense:0,income:0})}
+    function money(v){return new Intl.NumberFormat('ru-RU',{style:'currency',currency:'RUB',maximumFractionDigits:0}).format(v)}
+    function monthLabel(v){return new Intl.DateTimeFormat('ru-RU',{month:'long',year:'numeric'}).format(new Date(v+'-01T00:00:00'))}
+    function dateLabel(v){return new Intl.DateTimeFormat('ru-RU',{day:'numeric',month:'long'}).format(new Date(v+'T00:00:00'))}
+    function today(){const d=new Date(); return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`}
+    function monthKey(date){return String(date).slice(0,7)}
+    function apiUrl(){return localStorage.getItem(API_KEY)||''}
+    function applyQueryApi(){const url=new URL(window.location.href); const api=url.searchParams.get('api'); if(!api)return; localStorage.setItem(API_KEY,api); url.searchParams.delete('api'); history.replaceState({},'',url.toString())}
+    function remote(params){const base=apiUrl(); if(!base)return Promise.reject(new Error('Не настроен URL Apps Script.')); return new Promise((resolve,reject)=>{const cb=`${CALLBACK_PREFIX}_${Date.now()}_${Math.floor(Math.random()*1e5)}`; const s=document.createElement('script'); const t=window.setTimeout(()=>{clean(); reject(new Error('Google Sheets не ответил вовремя.'))},TIMEOUT); function clean(){window.clearTimeout(t); delete window[cb]; s.remove()} window[cb]=payload=>{clean(); if(!payload||payload.ok===false)return reject(new Error(payload&&payload.message?payload.message:'Не удалось прочитать данные из Google Sheets.')); resolve(normalize(payload.entries||[]))}; s.async=true; s.onerror=()=>{clean(); reject(new Error('Не удалось подключиться к Google Sheets Web App.'))}; const url=new URL(base); url.searchParams.set('prefix',cb); Object.entries(params).forEach(([k,v])=>{if(v!==undefined&&v!==null&&String(v)!=='')url.searchParams.set(k,String(v))}); s.src=url.toString(); document.head.appendChild(s)})}
+    function status(text){el.statusText.textContent=text}
+    function errMsg(err){return err&&typeof err.message==='string'&&err.message? err.message : 'Произошла ошибка.'}
+    function download(name,content,type){const blob=new Blob([content],{type}); const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download=name; document.body.appendChild(a); a.click(); a.remove(); URL.revokeObjectURL(a.href)}
+    function esc(v){return String(v).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;')}
+  </script>
+</body>
+</html>
